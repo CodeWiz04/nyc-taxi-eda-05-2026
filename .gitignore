@@ -1,0 +1,26 @@
+# Virtual environments
+.venv/
+
+# Python cache
+__pycache__/
+*.py[oc]
+*.egg-info/
+build/
+dist/
+
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+reports/figures/*
+!reports/figures/.gitkeep
+
+# Editor/OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test cache
+.pytest_cache/
+.ipynb_checkpoints/
