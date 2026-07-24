@@ -71,3 +71,9 @@ for col in [
 ]:
     print(f"\n{col}")
     print(df.groupby("VendorID")[col].apply(lambda x: x.isna().mean()))
+    
+# 1.passenger_count=>Already catered by median
+# 2.RatecodeID=>Unknown Category
+df['RatecodeID']=df['RatecodeID'].cat.add_categories(['Unknown'])
+df['RatecodeID']=df['RatecodeID'].fillna("Unknown")
+print("Filled missing RatecodeID with 'Unknown'.")
