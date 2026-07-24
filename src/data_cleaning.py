@@ -56,3 +56,7 @@ print("---Missing values for each column---")
 missing=df.isnull().sum()
 missing=missing[missing>0] 
 print(missing)
+
+missing_percent=(df.isnull().sum()/len(df))*100
+missing_percent=missing_percent[missing_percent>0]
+print(missing_percent.sort_values(ascending=False))
