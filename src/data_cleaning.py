@@ -25,3 +25,13 @@ for col in categorical_cols:
     
 print(df[categorical_cols].dtypes)
 print(df.dtypes)
+
+datetime_cols=[
+    "tpep_pickup_datetime",
+    "tpep_dropoff_datetime"
+]
+for col in datetime_cols:
+    df[col]=pd.to_datetime(df[col])
+    
+    
+print(df[datetime_cols].dtypes)
