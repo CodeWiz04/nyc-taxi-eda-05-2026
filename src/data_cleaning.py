@@ -77,3 +77,8 @@ for col in [
 df['RatecodeID']=df['RatecodeID'].cat.add_categories(['Unknown'])
 df['RatecodeID']=df['RatecodeID'].fillna("Unknown")
 print("Filled missing RatecodeID with 'Unknown'.")
+
+# 3.store_and_fwd_flag -> Unknown category
+df["store_and_fwd_flag"]=df["store_and_fwd_flag"].cat.add_categories(['Unknown'])
+df["store_and_fwd_flag"]=df["store_and_fwd_flag"].fillna("Unknown")
+print("Filled missing store_and_fwd_flag with 'Unknown'.")
