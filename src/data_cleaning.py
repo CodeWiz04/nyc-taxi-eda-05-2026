@@ -35,3 +35,18 @@ for col in datetime_cols:
     
     
 print(df[datetime_cols].dtypes)
+
+# # Converting passenger_count to int
+# df['passenger_count']=df['passenger_count'].astype("int64")
+
+# print(df.dtypes)
+
+print(df["passenger_count"].isna().sum())
+# First handle missings values in passenger_count column to convert the data type of that column
+df['passenger_count']=df['passenger_count'].fillna(
+    df['passenger_count'].median()
+)
+print("After handling missing values in passenger_count column:", df["passenger_count"].isna().sum())
+df['passenger_count']=df['passenger_count'].astype("int64")
+
+print(df.dtypes)
