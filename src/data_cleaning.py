@@ -90,3 +90,6 @@ print("Filled missing congestion_surcharge with 0")
 # 5.Airport_fee->0
 df['Airport_fee']=df['Airport_fee'].fillna(0)
 print("Filled missing Airport_fee with 0")
+
+print("\nFinal Data Types:")
+print(df.dtypes)
