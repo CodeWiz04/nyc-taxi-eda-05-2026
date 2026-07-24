@@ -50,3 +50,9 @@ print("After handling missing values in passenger_count column:", df["passenger_
 df['passenger_count']=df['passenger_count'].astype("int64")
 
 print(df.dtypes)
+
+# Handling missing values
+print("---Missing values for each column---")
+missing=df.isnull().sum()
+missing=missing[missing>0] 
+print(missing)
