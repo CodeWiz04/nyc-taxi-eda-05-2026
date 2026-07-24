@@ -60,3 +60,14 @@ print(missing)
 missing_percent=(df.isnull().sum()/len(df))*100
 missing_percent=missing_percent[missing_percent>0]
 print(missing_percent.sort_values(ascending=False))
+
+print(df.groupby("VendorID")["RatecodeID"].apply(lambda x: x.isna().mean()))
+
+
+for col in [
+    "store_and_fwd_flag",
+    "congestion_surcharge",
+    "Airport_fee"
+]:
+    print(f"\n{col}")
+    print(df.groupby("VendorID")[col].apply(lambda x: x.isna().mean()))
