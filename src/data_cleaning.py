@@ -82,3 +82,7 @@ print("Filled missing RatecodeID with 'Unknown'.")
 df["store_and_fwd_flag"]=df["store_and_fwd_flag"].cat.add_categories(['Unknown'])
 df["store_and_fwd_flag"]=df["store_and_fwd_flag"].fillna("Unknown")
 print("Filled missing store_and_fwd_flag with 'Unknown'.")
+
+# 4.congestion_surcharge->0
+df['congestion_surcharge']=df['congestion_surcharge'].fillna(0)
+print("Filled missing congestion_surcharge with 0")
