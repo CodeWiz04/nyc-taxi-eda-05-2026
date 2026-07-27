@@ -110,3 +110,9 @@ def plot_tip_violin(df):
     sns.violinplot(x=card_df["payment_type"],y=card_df["tip_amount"],cut=0)
     plt.title("Tip Amount Distribution for Card Payments")
     save_fig("bivariate_num_cat_violin_tip_by_payment.png")
+
+def plot_distance_by_flag_bar(df):
+    plt.figure(figsize=(6, 4))
+    sns.barplot(x=df["store_and_fwd_flag"], y=df["trip_distance"], estimator="mean", errorbar="sd")
+    plt.title("Average Trip Distance by store_and_fwd_flag")
+    save_fig("bivariate_num_cat_bar_distance_by_flag.png")
