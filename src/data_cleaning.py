@@ -95,12 +95,21 @@ print("\nFinal Data Types:")
 print(df.dtypes)
 
 #Fields with no sane imputable value (timestamps, GPS coordinates) should be dropped if missing: do not invent a pickup time or location 
-critical_cols={
+critical_cols=[
     "tpep_pickup_datetime",
     "tpep_dropoff_datetime",
     "PULocationID",
     "DOLocationID"
-}
+]
 critical_missing=df[critical_cols].isna().sum()
 print("\nMissing values in critical Col:")
 print(critical_missing)
+
+if critical_missing.sum()>0:
+    print("Dropping rows with missing values in critical columns.")
+    df=df.dropna(subset=critical_cols)
+    rows_dropped=critical_missing.sum()
+    
+    print(f"Dropped {rows_dropped} rows due to missing timestamps or location IDs.")
+else:
+    print("No missing values found in critical columns. No rows dropped.")
