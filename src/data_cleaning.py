@@ -93,3 +93,14 @@ print("Filled missing Airport_fee with 0")
 
 print("\nFinal Data Types:")
 print(df.dtypes)
+
+#Fields with no sane imputable value (timestamps, GPS coordinates) should be dropped if missing: do not invent a pickup time or location 
+critical_cols={
+    "tpep_pickup_datetime",
+    "tpep_dropoff_datetime",
+    "PULocationID",
+    "DOLocationID"
+}
+critical_missing=df[critical_cols].isna().sum()
+print("\nMissing values in critical Col:")
+print(critical_missing)
