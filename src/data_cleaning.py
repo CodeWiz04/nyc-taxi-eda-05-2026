@@ -134,3 +134,13 @@ zero_passengers=(df["passenger_count"]==0).sum()
 print("Zero Passenger trips:", zero_passengers)
 df=df[df["passenger_count"]>0]
 print("Remaining zero passengers trips:", (df["passenger_count"]==0).sum())
+
+#Impossible timestamps (dropoff before pickup)
+    
+invalid_time=(df["tpep_dropoff_datetime"]<df["tpep_pickup_datetime"]).sum()
+print(f"Dropoff before pickup: {invalid_time}")
+
+df=df[
+    df["tpep_dropoff_datetime"]>=df["tpep_pickup_datetime"]
+]
+print("Remaining dropoffs before pickups",(df["tpep_dropoff_datetime"]<df["tpep_pickup_datetime"]).sum())
