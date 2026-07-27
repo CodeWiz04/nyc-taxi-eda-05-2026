@@ -113,3 +113,10 @@ if critical_missing.sum()>0:
     print(f"Dropped {rows_dropped} rows due to missing timestamps or location IDs.")
 else:
     print("No missing values found in critical columns. No rows dropped.")
+    
+#Also handle: negative fares/distances, zero-passenger trips, impossible timestamps (dropoff before pickup)
+neg_fares=(df["fare_amount"]<0).sum()
+print("Negative fares:", neg_fares)
+
+df=df[df["fare_amount"]>=0]
+print("Remaining negative fares:", (df["fare_amount"] < 0).sum())
