@@ -18,3 +18,10 @@ def add_derived_features(df):
     df["pickup_hour"] = df["tpep_pickup_datetime"].dt.hour
     df["pickup_dayofweek"] = df["tpep_pickup_datetime"].dt.dayofweek
     return df
+
+def get_column_groups(df):
+    numerical_cols=df.select_dtypes(include=["number"]).columns.tolist()
+    categorical_cols=df.select_dtypes(include=["category"]).columns.tolist()
+    high_cardinality_cols=[c for c in ["PULocationID","DOLocationID"] if c in categorical_cols]
+    low_cardinality_cats = [c for c in categorical_cols if c not in high_cardinality_cols]
+    return numerical_cols, low_cardinality_cats, high_cardinality_cols
