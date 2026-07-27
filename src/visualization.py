@@ -31,4 +31,14 @@ def plot_fare_distribution(df):
     plt.title("Fare Amount Distribution ($, capped at 99th percentile)")
     plt.xlabel("Fare amount ($)")
     save_fig("fare_distribution.png")
+    
+def plot_categorical_counts(df, low_cardinality_cats):
+    for col in low_cardinality_cats:
+        plt.figure(figsize=(6, 4))
+        order = df[col].value_counts().index
+        sns.countplot(x=df[col], order=order, color="teal")
+        plt.title(f"Count plot of {col}")
+        plt.xticks(rotation=45)
+        save_fig(f"univariate_cat_{col}.png")
+ 
         
