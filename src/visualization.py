@@ -102,3 +102,11 @@ def plot_boxplots(df, pairs):
         plt.title(f"{num_col} Distribution Across {cat_col}")
         plt.xticks(rotation=45)
         save_fig(f"bivariate_num_cat_box_{num_col}_by_{cat_col}.png")
+        
+        
+def plot_tip_violin(df):
+    card_df=df[df["payment_type"]==1]
+    plt.figure(figsize=(7,5))
+    sns.violinplot(x=card_df["payment_type"],y=card_df["tip_amount"],cut=0)
+    plt.title("Tip Amount Distribution for Card Payments")
+    save_fig("bivariate_num_cat_violin_tip_by_payment.png")
