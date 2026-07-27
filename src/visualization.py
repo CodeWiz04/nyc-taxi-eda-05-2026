@@ -60,5 +60,12 @@ def run_univariate_analysis(df,numerical_cols,low_cardinality_cats,high_cardinal
     plot_fare_distribution(df)
     plot_categorical_counts(df,low_cardinality_cats)
     plot_high_cardinality_top15(df,high_cardinality_cols)
- 
+
+# BIVARIATE ANALYSIS
+def plot_correlation_heatmap(df,numerical_cols):
+    plt.figure(figsize=(10,8))
+    corr=df[numerical_cols].corr()
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0)
+    plt.title("Correlation Heatmap of Numerical Features")
+    save_fig("bivariate_num_num_heatmap.png")
         
