@@ -25,3 +25,12 @@ def get_column_groups(df):
     high_cardinality_cols=[c for c in ["PULocationID","DOLocationID"] if c in categorical_cols]
     low_cardinality_cats = [c for c in categorical_cols if c not in high_cardinality_cols]
     return numerical_cols, low_cardinality_cats, high_cardinality_cols
+
+def save_fig(filename,dpi=100):
+    os.makedirs(IMAGES_DIR, exist_ok=True)
+    filepath = os.path.join(IMAGES_DIR, filename)
+    plt.tight_layout()
+    plt.savefig(filepath, dpi=dpi)
+    plt.close()
+    print(f"Saved: {filepath}")
+    
