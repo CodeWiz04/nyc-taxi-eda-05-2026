@@ -23,4 +23,12 @@ def plot_trip_duration_histogram(df):
     plt.title("Trip Duration Distribution (minutes, capped at 99th percentile)")
     plt.xlabel("Trip duration (minutes)")
     save_fig("trip_duration_histogram.png")
+
+def plot_fare_distribution(df):
+    cap = df["fare_amount"].quantile(0.99)
+    plt.figure(figsize=(8, 5))
+    sns.histplot(df[df["fare_amount"] <= cap]["fare_amount"], bins=50, kde=True, color="darkorange")
+    plt.title("Fare Amount Distribution ($, capped at 99th percentile)")
+    plt.xlabel("Fare amount ($)")
+    save_fig("fare_distribution.png")
         
