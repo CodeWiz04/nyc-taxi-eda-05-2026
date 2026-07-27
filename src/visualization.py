@@ -85,3 +85,11 @@ def plot_hourly_heatmap(df):
     plt.xlabel("Pickup Hour")
     plt.ylabel("Day of Week")
     save_fig("heatmap_hourly.png")
+    
+    
+def plot_scatter_pairs(df, pairs):
+    for x_col, y_col in pairs:
+        plt.figure(figsize=(6, 5))
+        sns.scatterplot(x=df[x_col], y=df[y_col], alpha=0.2, s=10)
+        plt.title(f"{x_col} vs {y_col}")
+        save_fig(f"bivariate_num_num_{x_col}_vs_{y_col}.png")
