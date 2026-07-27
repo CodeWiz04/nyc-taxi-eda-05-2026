@@ -189,3 +189,6 @@ print(
     "Remaining dropoffs before pickups:",
     (df["tpep_dropoff_datetime"] < df["tpep_pickup_datetime"]).sum()
 )
+
+df.to_parquet("data/processed/cleaned_taxi_data.parquet", index=False)
+print("Cleaned Data has been saved to data/processed/")
