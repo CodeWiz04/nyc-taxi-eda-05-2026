@@ -114,33 +114,78 @@ if critical_missing.sum()>0:
 else:
     print("No missing values found in critical columns. No rows dropped.")
     
-#Also handle: negative fares/distances, zero-passenger trips, impossible timestamps (dropoff before pickup)
-#Negative Fares
-neg_fares=(df["fare_amount"]<0).sum()
+# Also handle: negative fares/distances, zero-passenger trips,
+# impossible timestamps (dropoff before pickup)
+
+# ----------------------------
+# Negative Fares
+# ----------------------------
+neg_fares = (df["fare_amount"] < 0).sum()
 print("Negative fares:", neg_fares)
 
-df=df[df["fare_amount"]>=0]
+before_rows = len(df)
+df = df[df["fare_amount"] >= 0]
+after_rows = len(df)
+
+print(f"Rows before filter: {before_rows}")
+print(f"Rows after filter : {after_rows}")
+print(f"Rows removed      : {before_rows - after_rows}")
 print("Remaining negative fares:", (df["fare_amount"] < 0).sum())
 
-#Negative Distances
-neg_distances=(df["trip_distance"]<0).sum()
 
-print("Negative distances:", neg_distances)
-df=df[df["trip_distance"]>=0]
+# ----------------------------
+# Negative Distances
+# ----------------------------
+neg_distances = (df["trip_distance"] < 0).sum()
+print("\nNegative distances:", neg_distances)
+
+before_rows = len(df)
+df = df[df["trip_distance"] >= 0]
+after_rows = len(df)
+
+print(f"Rows before filter: {before_rows}")
+print(f"Rows after filter : {after_rows}")
+print(f"Rows removed      : {before_rows - after_rows}")
 print("Remaining negative distances:", (df["trip_distance"] < 0).sum())
 
-#Zero-passenger trips
-zero_passengers=(df["passenger_count"]==0).sum()
-print("Zero Passenger trips:", zero_passengers)
-df=df[df["passenger_count"]>0]
-print("Remaining zero passengers trips:", (df["passenger_count"]==0).sum())
 
-#Impossible timestamps (dropoff before pickup)
-    
-invalid_time=(df["tpep_dropoff_datetime"]<df["tpep_pickup_datetime"]).sum()
-print(f"Dropoff before pickup: {invalid_time}")
+# ----------------------------
+# Zero-passenger trips
+# ----------------------------
+zero_passengers = (df["passenger_count"] == 0).sum()
+print("\nZero passenger trips:", zero_passengers)
 
-df=df[
-    df["tpep_dropoff_datetime"]>=df["tpep_pickup_datetime"]
+before_rows = len(df)
+df = df[df["passenger_count"] > 0]
+after_rows = len(df)
+
+print(f"Rows before filter: {before_rows}")
+print(f"Rows after filter : {after_rows}")
+print(f"Rows removed      : {before_rows - after_rows}")
+print("Remaining zero passenger trips:", (df["passenger_count"] == 0).sum())
+
+
+# ----------------------------
+# Impossible timestamps
+# ----------------------------
+invalid_time = (
+    df["tpep_dropoff_datetime"] <
+    df["tpep_pickup_datetime"]
+).sum()
+
+print("\nDropoff before pickup:", invalid_time)
+
+before_rows = len(df)
+df = df[
+    df["tpep_dropoff_datetime"] >=
+    df["tpep_pickup_datetime"]
 ]
-print("Remaining dropoffs before pickups",(df["tpep_dropoff_datetime"]<df["tpep_pickup_datetime"]).sum())
+after_rows = len(df)
+
+print(f"Rows before filter: {before_rows}")
+print(f"Rows after filter : {after_rows}")
+print(f"Rows removed      : {before_rows - after_rows}")
+print(
+    "Remaining dropoffs before pickups:",
+    (df["tpep_dropoff_datetime"] < df["tpep_pickup_datetime"]).sum()
+)
