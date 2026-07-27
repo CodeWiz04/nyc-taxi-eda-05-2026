@@ -69,3 +69,19 @@ def plot_correlation_heatmap(df,numerical_cols):
     plt.title("Correlation Heatmap of Numerical Features")
     save_fig("bivariate_num_num_heatmap.png")
         
+        
+def plot_hourly_heatmap(df):
+    pivot = (
+        df.groupby(["pickup_dayofweek", "pickup_hour"])
+        .size()
+        .unstack(fill_value=0)
+    )
+    day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    pivot.index = day_labels
+ 
+    plt.figure(figsize=(12, 6))
+    sns.heatmap(pivot, cmap="YlOrRd", linewidths=0.5)
+    plt.title("Trip Volume by Hour of Day and Day of Week")
+    plt.xlabel("Pickup Hour")
+    plt.ylabel("Day of Week")
+    save_fig("heatmap_hourly.png")
