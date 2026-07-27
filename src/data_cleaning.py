@@ -115,8 +115,19 @@ else:
     print("No missing values found in critical columns. No rows dropped.")
     
 #Also handle: negative fares/distances, zero-passenger trips, impossible timestamps (dropoff before pickup)
+#Negative Fares
 neg_fares=(df["fare_amount"]<0).sum()
 print("Negative fares:", neg_fares)
 
 df=df[df["fare_amount"]>=0]
 print("Remaining negative fares:", (df["fare_amount"] < 0).sum())
+
+#Negative Distances
+neg_distances=(df["trip_distance"]<0).sum()
+
+print("Negative distances:", neg_distances)
+df=df[df["trip_distance"]>=0]
+print("Remaining negative distances:", (df["trip_distance"] < 0).sum())
+
+#Zero-passenger trips
+zero_passengers=(df["passenger_count"]==0).sum()
