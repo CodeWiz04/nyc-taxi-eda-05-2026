@@ -74,6 +74,9 @@ for col in [
     
 # 1.passenger_count=>Already catered by median
 # 2.RatecodeID=>Unknown Category
+df['RatecodeID']=df['RatecodeID'].astype(str)
+df['RatecodeID']=df['RatecodeID'].replace('nan', pd.NA)
+df['RatecodeID']=df['RatecodeID'].astype("category")
 df['RatecodeID']=df['RatecodeID'].cat.add_categories(['Unknown'])
 df['RatecodeID']=df['RatecodeID'].fillna("Unknown")
 print("Filled missing RatecodeID with 'Unknown'.")
