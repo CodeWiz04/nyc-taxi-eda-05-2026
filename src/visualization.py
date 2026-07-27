@@ -93,3 +93,12 @@ def plot_scatter_pairs(df, pairs):
         sns.scatterplot(x=df[x_col], y=df[y_col], alpha=0.2, s=10)
         plt.title(f"{x_col} vs {y_col}")
         save_fig(f"bivariate_num_num_{x_col}_vs_{y_col}.png")
+        
+def plot_boxplots(df, pairs):
+    """Boxplot of a numerical column grouped by a categorical column, for each pair."""
+    for num_col, cat_col in pairs:
+        plt.figure(figsize=(7, 5))
+        sns.boxplot(x=df[cat_col], y=df[num_col], showfliers=False)
+        plt.title(f"{num_col} Distribution Across {cat_col}")
+        plt.xticks(rotation=45)
+        save_fig(f"bivariate_num_cat_box_{num_col}_by_{cat_col}.png")
