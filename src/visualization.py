@@ -40,5 +40,20 @@ def plot_categorical_counts(df, low_cardinality_cats):
         plt.title(f"Count plot of {col}")
         plt.xticks(rotation=45)
         save_fig(f"univariate_cat_{col}.png")
+        
+        
+def plot_high_cardinality_top15(df, high_cardinality_cols):
+    """Top-15 bar chart for high-cardinality columns (PULocationID, DOLocationID)."""
+    for col in high_cardinality_cols:
+        top15 = df[col].value_counts().nlargest(15)
+        plt.figure(figsize=(8, 4))
+        sns.barplot(x=top15.index.astype(str), y=top15.values, color="purple")
+        plt.title(f"Top 15 most frequent {col} zones")
+        plt.xlabel(col)
+        plt.ylabel("Trip count")
+        plt.xticks(rotation=45)
+        save_fig(f"univariate_cat_{col}_top15.png")
+        
+        
  
         
