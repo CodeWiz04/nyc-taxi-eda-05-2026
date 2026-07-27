@@ -116,3 +116,25 @@ def plot_distance_by_flag_bar(df):
     sns.barplot(x=df["store_and_fwd_flag"], y=df["trip_distance"], estimator="mean", errorbar="sd")
     plt.title("Average Trip Distance by store_and_fwd_flag")
     save_fig("bivariate_num_cat_bar_distance_by_flag.png")
+    
+def run_bivariate_analysis(df, numerical_cols):
+    """Run every bivariate plot function in sequence."""
+    plot_correlation_heatmap(df, numerical_cols)
+    plot_hourly_heatmap(df)
+ 
+    scatter_pairs = [
+        ("trip_distance", "fare_amount"),
+        ("trip_distance", "total_amount"),
+        ("fare_amount", "tip_amount"),
+    ]
+    plot_scatter_pairs(df, scatter_pairs)
+ 
+    box_pairs = [
+        ("fare_amount", "payment_type"),
+        ("trip_distance", "VendorID"),
+        ("total_amount", "RatecodeID"),
+    ]
+    plot_boxplots(df, box_pairs)
+ 
+    plot_tip_violin(df)
+    plot_distance_by_flag_bar(df)
