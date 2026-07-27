@@ -131,3 +131,6 @@ print("Remaining negative distances:", (df["trip_distance"] < 0).sum())
 
 #Zero-passenger trips
 zero_passengers=(df["passenger_count"]==0).sum()
+print("Zero Passenger trips:", zero_passengers)
+df=df[df["passenger_count"]>0]
+print("Remaining zero passengers trips:", (df["passenger_count"]==0).sum())
