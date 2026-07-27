@@ -54,6 +54,11 @@ def plot_high_cardinality_top15(df, high_cardinality_cols):
         plt.xticks(rotation=45)
         save_fig(f"univariate_cat_{col}_top15.png")
         
-        
+def run_univariate_analysis(df,numerical_cols,low_cardinality_cats,high_cardinality_cols):
+    plot_numerical_histograms(df,numerical_cols)
+    plot_trip_duration_histogram(df)
+    plot_fare_distribution(df)
+    plot_categorical_counts(df,low_cardinality_cats)
+    plot_high_cardinality_top15(df,high_cardinality_cols)
  
         
