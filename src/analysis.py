@@ -141,7 +141,7 @@ def analyze_tip_rate_by_payment_type(df):
 # 4. Average trip duration by day of week
 # ------------------------------------------------------------------
 def analyze_duration_by_dayofweek(df):
-    grouped=df.groupby("pick_dayofweek")["trip_duration_mins"].mean().sort_index()
+    grouped=df.groupby("pickup_dayofweek")["trip_duration_mins"].mean().sort_index()
     grouped.index=DAY_LABELS
     print("\n--- 4. Average Trip Duration by Day of Week ---")
     for day, mins in grouped.items():

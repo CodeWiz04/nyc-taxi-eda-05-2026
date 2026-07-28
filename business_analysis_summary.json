@@ -1,0 +1,37 @@
+{
+  "peak_vs_trough_hour": {
+    "peak_hour": 18,
+    "trough_hour": 4,
+    "peak_count": 281921,
+    "trough_count": 32263,
+    "ratio": 8.74
+  },
+  "weekend_vs_weekday_fare": {
+    "weekday_mean_fare": 21.77,
+    "weekend_mean_fare": 20.87,
+    "difference": -0.89,
+    "pct_difference": -4.09,
+    "p_value": 0.0,
+    "statistically_significant": true
+  },
+  "tip_rate_by_payment_type": {
+    "top_payment_type": "Credit card",
+    "top_avg_tip_rate_pct": 24.71,
+    "top_share_of_trips_pct": 66.89
+  },
+  "avg_duration_by_dayofweek": {
+    "Mon": 18.74,
+    "Tue": 19.65,
+    "Wed": 19.58,
+    "Thu": 20.12,
+    "Fri": 19.33,
+    "Sat": 17.16,
+    "Sun": 17.29
+  },
+  "short_trip_fare_per_mile": {
+    "share_under_2mi_pct": 51.24,
+    "avg_fare_per_mile_under_2mi": 39.44,
+    "avg_fare_per_mile_2mi_plus": 6.25,
+    "ratio": 6.31
+  }
+}
