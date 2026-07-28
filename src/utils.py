@@ -12,6 +12,7 @@ def load_cleaned_data(path="data/processed/cleaned_taxi_data.parquet"):
 
 
 def add_derived_features(df):
+    """Making derived columns for better analysis"""
     df=df.copy()
     df["trip_duration_mins"]=(
         df["tpep_dropoff_datetime"] - df["tpep_pickup_datetime"]
