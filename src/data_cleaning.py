@@ -193,5 +193,112 @@ print(
     (df["tpep_dropoff_datetime"] < df["tpep_pickup_datetime"]).sum()
 )
 
+# ----------------------------
+# Outlier Detection
+# ----------------------------
+# Method justification:
+# fare_amount, trip_distance, total_amount and tip_amount are all heavily
+# right-skewed -- most trips are short/cheap, but a real minority (airport
+# runs, long crosstown trips) are legitimately large. That skew breaks the
+# two most common statistical outlier methods:
+#   - z-score assumes a roughly normal distribution. On skewed data the mean
+#     and std are themselves pulled by the tail, so the method both misses
+#     genuine errors and flags legitimate long trips.
+#   - a blanket 1.5*IQR rule over-flags on right-skewed data, because the
+#     "normal" upper range of fares/distances already sits close to the
+#     whisker, so a large chunk of perfectly real trips get marked.
+# Instead each feature uses a domain-knowledge ceiling (grounded in how NYC
+# taxis actually operate, per TLC rules/typical trip geography), backed up
+# by a 99.5th-percentile cutoff observed in this month's data as a
+# data-driven safety net -- whichever is tighter is used. Nothing is
+# silently dropped: every flagged row is either capped (winsorized), with
+# the fact recorded in a boolean flag column, or -- where no safe
+# replacement value exists -- kept untouched and flagged for downstream
+# caution.
+
+print("\n--- Outlier Detection ---")
+
+outlier_summary = {}
+
+def cap_outliers(df, col, upper_bound, label):
+    """Cap values above upper_bound; report and flag, never silently drop."""
+    flag_col = f"{col}_outlier_capped"
+    mask = df[col] > upper_bound
+    n_flagged = int(mask.sum())
+    df[flag_col] = mask
+    df.loc[mask, col] = upper_bound
+    outlier_summary[label] = {
+        "method": "domain threshold + 99.5th percentile backstop",
+        "upper_bound": upper_bound,
+        "rows_flagged": n_flagged,
+        "action": "capped (winsorized) to upper_bound; flagged, not deleted"
+    }
+    print(f"{label}: {n_flagged} rows above {upper_bound:.2f} -> capped, flagged in '{flag_col}'")
+    return df
+
+# fare_amount: NYC TLC in-city fares rarely exceed ~$250 even for long
+# trips; beyond that a metering/data error is far more likely than a real
+# fare. Use whichever is tighter: the domain ceiling or this month's
+# observed 99.5th percentile.
+fare_domain_cap = 250
+fare_pct_cap = df["fare_amount"].quantile(0.995)
+fare_upper = min(fare_domain_cap, fare_pct_cap)
+df = cap_outliers(df, "fare_amount", fare_upper, "fare_amount")
+
+# trip_distance: the longest plausible single NYC taxi trip (e.g. Manhattan
+# to a far borough edge or regional airport) is well under 100 miles.
+distance_domain_cap = 100
+distance_pct_cap = df["trip_distance"].quantile(0.995)
+distance_upper = min(distance_domain_cap, distance_pct_cap)
+df = cap_outliers(df, "trip_distance", distance_upper, "trip_distance")
+
+# total_amount: derived from fare + surcharges + tip, so it inherits the
+# same right skew. No independent domain ceiling makes sense here (it's a
+# function of the other capped fields), so use the 99.5th percentile alone.
+total_upper = df["total_amount"].quantile(0.995)
+df = cap_outliers(df, "total_amount", total_upper, "total_amount")
+
+# tip_amount: only meaningful for card payments (payment_type == 1), since
+# cash tips aren't captured by the meter and are legitimately recorded as 0.
+# A percentile cutoff computed across all payment types would treat those
+# structural zeros as part of the distribution and distort the threshold, so
+# the percentile is computed within card payments only.
+card_mask = df["payment_type"] == 1
+tip_upper = df.loc[card_mask, "tip_amount"].quantile(0.995)
+tip_outlier_mask = card_mask & (df["tip_amount"] > tip_upper)
+n_tip_flagged = int(tip_outlier_mask.sum())
+df["tip_amount_outlier_capped"] = tip_outlier_mask
+df.loc[tip_outlier_mask, "tip_amount"] = tip_upper
+outlier_summary["tip_amount"] = {
+    "method": "99.5th percentile within card-payment trips only",
+    "upper_bound": tip_upper,
+    "rows_flagged": n_tip_flagged,
+    "action": "capped (winsorized) to upper_bound; flagged, not deleted"
+}
+print(f"tip_amount (card payments only): {n_tip_flagged} rows above {tip_upper:.2f} -> capped, flagged in 'tip_amount_outlier_capped'")
+
+# passenger_count: NYC TLC licenses taxis for a maximum of 6 passengers.
+# Values above that are almost certainly data-entry errors, but unlike the
+# monetary/distance features there's no sane value to cap them *to* --
+# capping to 6 would fabricate a plausible-looking but unverifiable number.
+# So these rows are left untouched and only flagged, with the caveat that
+# downstream analysis should treat them with caution (or filter on the flag
+# if a stricter view is needed).
+passenger_domain_cap = 6
+passenger_outlier_mask = df["passenger_count"] > passenger_domain_cap
+n_passenger_flagged = int(passenger_outlier_mask.sum())
+df["passenger_count_outlier"] = passenger_outlier_mask
+outlier_summary["passenger_count"] = {
+    "method": "domain threshold (TLC max licensed capacity = 6)",
+    "upper_bound": passenger_domain_cap,
+    "rows_flagged": n_passenger_flagged,
+    "action": "kept as-is; flagged in 'passenger_count_outlier' (no removal, no safe substitute value)"
+}
+print(f"passenger_count: {n_passenger_flagged} rows above {passenger_domain_cap} -> kept, flagged in 'passenger_count_outlier' (not removed)")
+
+print("\n--- Outlier Detection Summary ---")
+for feature, info in outlier_summary.items():
+    print(f"{feature}: {info['rows_flagged']} rows flagged | method: {info['method']} | action: {info['action']}")
+
 df.to_parquet("data/processed/cleaned_taxi_data.parquet", index=False)
 print("Cleaned Data has been saved to data/processed/")
