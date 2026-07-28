@@ -21,6 +21,8 @@ CONTENT_WIDTH = PAGE_WIDTH - 1.4 * inch  # matches SimpleDocTemplate margins
 
 
 def load_json(path):
+    
+    """Loads business analysis summary json file"""
     if not os.path.exists(path):
         raise FileNotFoundError(
             f"Could not find {path}. Run the pipeline step that produces it "
@@ -42,6 +44,7 @@ def fitted_image(path, max_width=CONTENT_WIDTH, max_height=3.6 * inch):
 
 
 def build_styles():
+    """For styling purpose"""
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(
         name="ReportTitle", parent=styles["Title"], fontSize=24, spaceAfter=6
@@ -66,6 +69,7 @@ def build_styles():
 
 
 def make_table(data, col_widths=None):
+    """For table design"""
     table = Table(data, colWidths=col_widths, repeatRows=1)
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a3c5e")),
