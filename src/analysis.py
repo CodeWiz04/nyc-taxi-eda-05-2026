@@ -96,3 +96,43 @@ def analyze_weekend_vs_weekday_fare(df):
         "p_value": float(p_value),
         "statistically_significant": bool(statistically_significant),
     }
+    
+def analyze_tip_rate_by_payment_type(df):
+    valid=df[df["fare_amount"]>0].copy()
+    valid["tip_rate"]=valid["tip_amount"]/valid["fare_amount"]
+    
+    grouped=valid.groupby("payment_type",observed=True).agg(
+        avg_tip_rate=("tip_rate","mean"),n_trips=("tip_rate","size")
+        
+    )
+    grouped["share_of_trips_pct"]=grouped["n_trips"]/grouped["n_trips"].sum()*100
+    grouped=grouped.sort_values("avg_tip_rate",ascending=False)
+    top_type = grouped.index[0]
+    top_label = PAYMENT_TYPE_LABELS.get(top_type, str(top_type))
+    top_rate = grouped.loc[top_type, "avg_tip_rate"]
+    top_share = grouped.loc[top_type, "share_of_trips_pct"]
+    print("\n--- 3. Payment Type with Highest Avg Tip Rate ---")
+    print(
+        "Caveat: cash tips are not captured by the TLC meter and are "
+        "recorded as $0, so cash will structurally show ~0% tip rate here "
+        "regardless of what riders actually tip in cash."
+    )
+    print(f"Highest avg tip rate: {top_label} at {top_rate*100:.1f}% of fare")
+    print(f"{top_label} share of total trips: {top_share:.1f}%")
+ 
+    grouped_display = grouped.copy()
+    grouped_display.index = [PAYMENT_TYPE_LABELS.get(i, str(i)) for i in grouped_display.index]
+ 
+    plt.figure(figsize=(7, 5))
+    sns.barplot(x=grouped_display.index, y=grouped_display["avg_tip_rate"] * 100, color="darkorange")
+    plt.title(f"Avg Tip Rate by Payment Type (top: {top_label} = {top_rate*100:.1f}%)")
+    plt.xlabel("Payment type")
+    plt.ylabel("Average tip rate (% of fare)")
+    plt.xticks(rotation=30)
+    save_fig("business_tip_rate_by_payment_type.png")
+ 
+    return {
+        "top_payment_type": top_label,
+        "top_avg_tip_rate_pct": round(float(top_rate * 100), 2),
+        "top_share_of_trips_pct": round(float(top_share), 2),
+    }
