@@ -195,3 +195,29 @@ def analyze_short_trip_fare_per_mile(df):
         "avg_fare_per_mile_2mi_plus": round(float(fpm_long), 2),
         "ratio": round(float(fpm_ratio), 2),
     }
+    
+def run_business_analysis(df):
+    results = {
+        "peak_vs_trough_hour": analyze_peak_vs_slow_hour(df),
+        "weekend_vs_weekday_fare": analyze_weekend_vs_weekday_fare(df),
+        "tip_rate_by_payment_type": analyze_tip_rate_by_payment_type(df),
+        "avg_duration_by_dayofweek": analyze_duration_by_dayofweek(df),
+        "short_trip_fare_per_mile": analyze_short_trip_fare_per_mile(df),
+    }
+    return results
+
+
+def main():
+    df = load_cleaned_data()
+    df = add_derived_features(df)
+ 
+    results = run_business_analysis(df)
+ 
+    with open("business_analysis_summary.json", "w") as f:
+        json.dump(results, f, indent=2)
+    print("\nSaved numeric summary to business_analysis_summary.json")
+    print("Charts saved to images/")
+ 
+ 
+if __name__ == "__main__":
+    main()
