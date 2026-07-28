@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 IMAGES_DIR="images"
 
 def load_cleaned_data(path="data/processed/cleaned_taxi_data.parquet"):
+    '''Loads cleaned data present in data/processed'''
     df = pd.read_parquet(path)
     print(f"Loaded cleaned dataset: {df.shape[0]} rows, {df.shape[1]} columns")
     return df
