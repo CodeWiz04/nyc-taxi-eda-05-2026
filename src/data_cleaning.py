@@ -249,16 +249,12 @@ distance_upper = min(distance_domain_cap, distance_pct_cap)
 df = cap_outliers(df, "trip_distance", distance_upper, "trip_distance")
 
 # total_amount: derived from fare + surcharges + tip, so it inherits the
-# same right skew. No independent domain ceiling makes sense here (it's a
-# function of the other capped fields), so use the 99.5th percentile alone.
+# same right skew.
 total_upper = df["total_amount"].quantile(0.995)
 df = cap_outliers(df, "total_amount", total_upper, "total_amount")
 
 # tip_amount: only meaningful for card payments (payment_type == 1), since
 # cash tips aren't captured by the meter and are legitimately recorded as 0.
-# A percentile cutoff computed across all payment types would treat those
-# structural zeros as part of the distribution and distort the threshold, so
-# the percentile is computed within card payments only.
 card_mask = df["payment_type"] == 1
 tip_upper = df.loc[card_mask, "tip_amount"].quantile(0.995)
 tip_outlier_mask = card_mask & (df["tip_amount"] > tip_upper)
