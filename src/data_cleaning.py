@@ -210,11 +210,7 @@ print(
 # Instead each feature uses a domain-knowledge ceiling (grounded in how NYC
 # taxis actually operate, per TLC rules/typical trip geography), backed up
 # by a 99.5th-percentile cutoff observed in this month's data as a
-# data-driven safety net -- whichever is tighter is used. Nothing is
-# silently dropped: every flagged row is either capped (winsorized), with
-# the fact recorded in a boolean flag column, or -- where no safe
-# replacement value exists -- kept untouched and flagged for downstream
-# caution.
+# data-driven safety net -- whichever is tighter is used.
 
 print("\n--- Outlier Detection ---")
 
