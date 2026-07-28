@@ -1,20 +1,3 @@
-"""
-Assembles reports/final_report.pdf for a non-technical stakeholder.
-
-This script does NOT recompute anything -- it only reads what the pipeline
-already produced and lays it out:
-    - data/processed/cleaning_summary.json   (written by src/data_cleaning.py)
-    - business_analysis_summary.json          (written by src/business_analysis.py)
-    - images/*.png                            (written by src/visualization.py
-                                                 and src/business_analysis.py)
-
-Run this after data_cleaning.py, main.py, and business_analysis.py have all
-completed successfully:
-    python generate_report.py
-
-Requires reportlab:
-    pip install reportlab
-"""
 
 import json
 import os
