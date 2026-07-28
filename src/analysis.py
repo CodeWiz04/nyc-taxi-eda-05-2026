@@ -49,3 +49,50 @@ def analyze_peak_vs_slow_hour(df):
         "trough_count": slow_count,
         "ratio": round(ratio, 2),
     }
+    
+def analyze_weekend_vs_weekday_fare(df):
+    is_weekend=df["pickup_dayofweek"]>=5
+    weekday_fares=df.loc[~is_weekend,"fare_amount"]
+    weekend_fares=df.loc[is_weekend,"fare_amount"]
+    
+    weekday_mean=weekday_fares.mean()
+    weekend_mean=weekend_fares.mean()
+    diff=weekend_mean-weekday_mean
+    pct_diff=(diff/weekday_mean)*100
+    
+    stat,p_value=stats.mannwhitneyu(
+        weekend_fares,weekday_fares,alternative="two-sided"
+    )
+    statistically_significant=p_value<0.05
+    
+    print("\n--- 2. Weekend vs Weekday Average Fare ---")
+    print(f"Weekday mean fare: ${weekday_mean:.2f} (n={len(weekday_fares):,})")
+    print(f"Weekend mean fare: ${weekend_mean:.2f} (n={len(weekend_fares):,})")
+    print(f"Difference (weekend - weekday): ${diff:+.2f} ({pct_diff:+.1f}%)")
+    print(f"Mann-Whitney U p-value: {p_value:.4g}")
+    print(f"Statistically significant (p<0.05): {statistically_significant}")
+    print(
+        "Caveat: with sample sizes this large, even tiny/trivial differences "
+        "tend to be statistically significant. Judge practical importance "
+        "from the dollar/percent difference above, not the p-value alone."
+    )
+ 
+    cap = df["fare_amount"].quantile(0.99)
+    plot_df = df[df["fare_amount"] <= cap].copy()
+    plot_df["day_type"] = np.where(plot_df["pickup_dayofweek"] >= 5, "Weekend", "Weekday")
+ 
+    plt.figure(figsize=(6, 5))
+    sns.boxplot(x="day_type", y="fare_amount", data=plot_df, showfliers=False)
+    plt.title(f"Fare Amount: Weekend vs Weekday (diff = ${diff:+.2f}, p={p_value:.3g})")
+    plt.xlabel("")
+    plt.ylabel("Fare amount ($)")
+    save_fig("business_weekend_vs_weekday_fare.png")
+ 
+    return {
+        "weekday_mean_fare": round(float(weekday_mean), 2),
+        "weekend_mean_fare": round(float(weekend_mean), 2),
+        "difference": round(float(diff), 2),
+        "pct_difference": round(float(pct_diff), 2),
+        "p_value": float(p_value),
+        "statistically_significant": bool(statistically_significant),
+    }
