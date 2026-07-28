@@ -156,3 +156,42 @@ def analyze_duration_by_dayofweek(df):
  
     return {day: round(float(mins), 2) for day, mins in grouped.items()}
  
+ 
+# ----------------------------------------------------------------------
+# 5. Share of trips under 2 miles + fare-per-mile comparison
+# ----------------------------------------------------------------------
+def analyze_short_trip_fare_per_mile(df):
+    valid=df[df["trip_distance"]>0].copy()
+    valid["fare_per_mile"]=valid["fare_amount"]/valid["trip_distance"]
+    
+    short=valid[valid["trip_distance"]<2]
+    longer=valid[valid["trip_distance"]>=2]
+    
+    share_short_pct=len(short)/len(valid)*100
+    fpm_short=short["fare_per_mile"].mean()
+    fpm_long=longer["fare_per_mile"].mean()
+    fpm_ratio=fpm_short/fpm_long
+    
+    print("\n--- 5. Short Trips (<2mi) Share & Fare-per-Mile ---")
+    print(f"Share of trips under 2 miles: {share_short_pct:.1f}% (n={len(short):,} of {len(valid):,})")
+    print(f"Avg fare/mile, trips <2mi:  ${fpm_short:.2f}")
+    print(f"Avg fare/mile, trips >=2mi: ${fpm_long:.2f}")
+    print(f"Short trips cost {fpm_ratio:.1f}x more per mile than longer trips")
+ 
+    cap = valid["fare_per_mile"].quantile(0.99)
+    plot_df = valid[valid["fare_per_mile"] <= cap].copy()
+    plot_df["trip_group"] = np.where(plot_df["trip_distance"] < 2, "<2 miles", ">=2 miles")
+ 
+    plt.figure(figsize=(6, 5))
+    sns.barplot(x="trip_group", y="fare_per_mile", data=plot_df, estimator="mean", errorbar="sd", color="purple")
+    plt.title(f"Fare per Mile: <2mi vs >=2mi ({fpm_ratio:.1f}x higher for short trips)")
+    plt.xlabel("")
+    plt.ylabel("Fare per mile ($)")
+    save_fig("business_short_trip_fare_per_mile.png")
+ 
+    return {
+        "share_under_2mi_pct": round(float(share_short_pct), 2),
+        "avg_fare_per_mile_under_2mi": round(float(fpm_short), 2),
+        "avg_fare_per_mile_2mi_plus": round(float(fpm_long), 2),
+        "ratio": round(float(fpm_ratio), 2),
+    }
