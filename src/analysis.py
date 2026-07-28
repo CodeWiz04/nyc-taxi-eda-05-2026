@@ -136,3 +136,23 @@ def analyze_tip_rate_by_payment_type(df):
         "top_avg_tip_rate_pct": round(float(top_rate * 100), 2),
         "top_share_of_trips_pct": round(float(top_share), 2),
     }
+    
+# ----------------------------------------------------------------------
+# 4. Average trip duration by day of week
+# ------------------------------------------------------------------
+def analyze_duration_by_dayofweek(df):
+    grouped=df.groupby("pick_dayofweek")["trip_duration_mins"].mean().sort_index()
+    grouped.index=DAY_LABELS
+    print("\n--- 4. Average Trip Duration by Day of Week ---")
+    for day, mins in grouped.items():
+        print(f"{day}: {mins:.1f} min")
+ 
+    plt.figure(figsize=(8, 5))
+    sns.barplot(x=grouped.index, y=grouped.values, color="teal")
+    plt.title("Average Trip Duration by Day of Week")
+    plt.xlabel("Day of week")
+    plt.ylabel("Average trip duration (minutes)")
+    save_fig("business_avg_duration_by_day.png")
+ 
+    return {day: round(float(mins), 2) for day, mins in grouped.items()}
+ 
